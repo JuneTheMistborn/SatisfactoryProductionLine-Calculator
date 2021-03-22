@@ -8,45 +8,65 @@
 from tkinter import *
 from PIL import ImageTk, Image
 
+
 # Initializing window
-root = Tk()
-root.title("Satisfactory Production Calculator")
-root.configure(bg="#5f668c")
-root.attributes("-fullscreen", True)
+class Calculator:
+    def __init__(self):
+        self.root = Tk()
+        self.root.title("Satisfactory Production Calculator")
+        self.root.configure(bg="#5F668C")
+        self.root.attributes("-fullscreen", True)
+
+        # Placing the background image in the center of the screen
+        self.canvas = Canvas(self.root, width=850, height=778, highlightthickness=0)
+        self.img = ImageTk.PhotoImage(Image.open("Recipe.png"))
+        self.canvas.create_image(0, 0, anchor=NW, image=self.img)
+        self.canvas.place(relx=0.5, rely=0.5, anchor=CENTER)
+
+        # Entry based overclocking
+        self.overclockIn = Entry(fg="#E59345", width=9)
+        self.overclockIn.insert(0, "100.0000%")
+        self.overclockIn.place(x=710, y=734)
+
+        self.root.bind("<Return>", (lambda event: self.ValidateOverclock(self.overclockIn.get())))
+
+        self.overclockValid = Label(bd=0, fg="#278E3A", text="The overclock percentage is valid!")
+        self.overclockValid.place(x=770, y=734)
+
+        # Slider based overclocking
+        self.overclockSlider = Scale(command=self.ValidateOverclock, troughcolor="#FA9549", orient="horizontal",
+                                     from_=0.0, to=250.0, length=500, width=45, sliderlength=10, bd=5,
+                                     highlightthickness=0, tickinterval=50.0)
+        self.overclockSlider.set(100)
+        self.overclockSlider.place(x=705, y=766)
+
+        self.exitBtn = Button(self.root, text="Quit", command=self.Close, bg="#E41B1E", activebackground="#e41b1e")
+        self.exitBtn.place(x=0, y=0)
+
+        self.root.mainloop()
+
+    # Defining function to be called on quit button press and
+    # function to validate the input number for overclock percentage
+    def Close(self):
+        self.root.destroy()
+
+    def ValidateOverclock(self, overclock_var):
+        try:
+            if 250.0 >= float(overclock_var.strip("%")) >= 0.0:
+                overclock = f"{(float(overclock_var.strip('%'))):.4f}"
+                self.overclockValid.configure(text="The overclock percentage is valid!", fg="#278E3A")
+                if float(overclock) == round(float(self.overclockIn.get().strip("%"))):
+                    pass
+                elif float(overclock) != round(float(self.overclockIn.get().strip("%"))):
+                    self.overclockIn.delete(0, "end")
+                    self.overclockIn.insert(0, overclock + "%")
+                    self.overclockSlider.set(float(overclock))
+            else:
+                self.overclockValid.configure(text="The overclock percentage is not valid!\nPlease enter a float "
+                                                   "between 0 and 250 with 4 or less decimal places.", fg="#B42E2C")
+        except ValueError:
+            self.overclockValid.configure(text="The overclock percentage is not valid!\nPlease enter a float between 0 "
+                                               "and 250 with 4 or less decimal places.", fg="#B42E2C")
 
 
-# Defining function to be called on quit button press and function to validate the input number for overclock percentage
-def Close():
-    root.destroy()
-
-
-def ValidateOverclock(overclock_var):
-    if overclock_var.islower() or overclock_var.isupper():
-        return False
-    elif 250 >= overclock_var >= 0:
-        return f"{(round(float(overclock_var), 4)):.4f}%"
-    else:
-        return False
-
-
-# Placing the background image in the center of the screen
-canvas = Canvas(root, width=850, height=778, bg="#fff", highlightthickness=0)
-img = ImageTk.PhotoImage(Image.open("Recipe.png"))
-canvas.create_image(0, 0, anchor=NW, image=img)
-canvas.place(relx=0.5, rely=0.5, anchor=CENTER)
-
-# Entry based overclocking
-overclockVar = 0.0
-overclockIn = Entry(fg="#e59345", width=9)
-overclockIn.place(x=710, y=734)
-
-# Slider based overclocking
-overclockSlider = Scale(bg="#fff", troughcolor="#fa9549", from_=0.0, to=250.0, bd=5, tickinterval=50.0,
-                        orient="horizontal", sliderlength=10, length=500, width=45, highlightthickness=0)
-overclockSlider.set(100)
-overclockSlider.place(x=705, y=766)
-
-exitBtn = Button(root, text="Quit", command=Close, bg="#e41b1e", activebackground="#e41b1e")
-exitBtn.place(x=0, y=0)
-
-root.mainloop()
+app = Calculator()
