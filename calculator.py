@@ -19,6 +19,7 @@ class Calculator:
         self.root.minsize(850, 778)
         self.root.title("Satisfactory Production Calculator")
         self.root.configure(bg="#5F668C")
+        self.root.bind('<Configure>', self.Resize)
 
         # Placing the background image in the center of the screen
         self.canvas = tk.Canvas(self.root, width=850, height=778, highlightthickness=0)
@@ -47,6 +48,13 @@ class Calculator:
         self.root.mainloop()
 
     # function to validate the input number for overclock percentage
+
+    def Resize(self, wh):
+        w = (1920-self.root.winfo_width())/2
+        h = (1040-self.root.winfo_height())/2
+        self.overclockIn.place(x=710-w, y=724-h)
+        self.overclockValid.place(x=970-w, y=724-h)
+        self.overclockSlider.place(x=705-w, y=770-h)
 
     def ValidateOverclock(self, overclock_var):
         try:
