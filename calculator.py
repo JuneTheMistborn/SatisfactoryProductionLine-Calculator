@@ -28,8 +28,7 @@ class Calculator:
         self.canvas.place(relx=0.5, rely=0.5, anchor=tk.CENTER)
 
         # Entry based overclocking
-        self.font = tk.font.Font(family="Myriad Pro", size=20)
-        self.overclockIn = tk.Entry(bd=0, fg="#E59345", width=9, font=self.font)
+        self.overclockIn = tk.Entry(bd=0, fg="#E59345", width=9, font=tk.font.Font(family="Myriad Pro", size=20))
         self.overclockIn.insert(0, "100.0000%")
         self.overclockIn.place(x=175, y=593)
 
@@ -44,6 +43,17 @@ class Calculator:
                                         highlightthickness=0, tickinterval=50.0, showvalue=0)
         self.overclockSlider.set(100)
         self.overclockSlider.place(x=170, y=639)
+
+        # All entries for in and output amounts
+        self.entryFont = tk.font.Font(family="Myriad Pro", size=10)
+
+        self.inputA = tk.Entry(bd=0, fg="#E7994F", width=9, font=self.entryFont)
+        #self.inputB = tk.Entry(bd=0, fg="#E7994F", width=9, font=self.entryFont)
+        #self.inputC = tk.Entry(bd=0, fg="#E7994F", width=9, font=self.entryFont)
+        #self.inputD = tk.Entry(bd=0, fg="#E7994F", width=9, font=self.entryFont)
+        self.outputA = tk.Entry(bd=0, fg="#E7994F", width=9, font=self.entryFont)
+        #self.outputB = tk.Entry(bd=0, fg="#E7994F", width=9, font=self.entryFont)
+
 
         self.root.mainloop()
 
