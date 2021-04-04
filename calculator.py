@@ -10,6 +10,7 @@ given how many items per minute it (needs/produces) at given overclock percentag
 import tkinter as tk
 from PIL import ImageTk, Image
 import tkinter.font as tkFont
+import re
 
 
 # Custom entry with hint/placeholder
@@ -55,13 +56,15 @@ class Calculator:
         self.canvas.place(relx=0.5, rely=0.5, anchor=tk.CENTER)
 
         # Entry based overclocking
-        self.overclockIn = tk.Entry(master=self.canvas, bd=0, fg="#E59345", width=9, font=tk.font.Font(family="Myriad Pro", size=20))
+        self.overclockIn = tk.Entry(master=self.canvas, bd=0, fg="#E59345", width=9,
+                                    font=tk.font.Font(family="Myriad Pro", size=20))
         self.overclockIn.insert(0, "100.0000%")
         self.overclockIn.place(x=175, y=593)
 
         self.root.bind("<Return>", (lambda event: self.ValidateOverclock(self.overclockIn.get())))
 
-        self.overclockValid = tk.Label(master=self.canvas, bd=0, fg="#278E3A", text="The overclock percentage is valid!")
+        self.overclockValid = tk.Label(master=self.canvas, bd=0, fg="#278E3A",
+                                       text="The overclock percentage is valid!")
         self.overclockValid.place(x=435, y=593)
 
         # Slider based overclocking
@@ -81,15 +84,30 @@ class Calculator:
 
         # All entries for in and output amounts
         self.entryFont = tk.font.Font(family="Myriad Pro", size=8)
+        self.validateIsNum = self.root.register(self.ValidateIsNum)
 
-        self.inputA = Hintry(master=self.canvas, hint="?", bd=0, fg="#E7994F", width=6, font=self.entryFont)
-        #self.inputB = tk.Entry(bd=0, fg="#E7994F", width=9, font=self.entryFont)
-        #self.inputC = tk.Entry(bd=0, fg="#E7994F", width=9, font=self.entryFont)
-        #self.inputD = tk.Entry(bd=0, fg="#E7994F", width=9, font=self.entryFont)
+        self.inputA = Hintry(master=self.inputAFrame, hint="?", bd=0, fg="#E7994F", width=1, font=self.entryFont,
+                             validate="key", validatecommand=(self.validateIsNum, "%S"))
+        self.inputA.bind("<Key>", self.EntryResize)
+
+        self.inputB = tk.Entry(bd=0, fg="#E7994F", width=9, font=self.entryFont)
+        self.inputB.bind("<Key>", self.EntryResize)
+
+        self.inputC = tk.Entry(bd=0, fg="#E7994F", width=9, font=self.entryFont)
+        self.inputC.bind("<Key>", self.EntryResize)
+
+        self.inputD = tk.Entry(bd=0, fg="#E7994F", width=9, font=self.entryFont)
+        self.inputD.bind("<Key>", self.EntryResize)
+
         self.outputA = Hintry(master=self.canvas, hint="?", bd=0, fg="#E7994F", width=9, font=self.entryFont)
-        #self.outputB = tk.Entry(bd=0, fg="#E7994F", width=9, font=self.entryFont)
+        self.outputA.bind("<Key>", self.EntryResize)
 
-        self.inputA.place(x=97, y=200)
+        self.outputB = tk.Entry(bd=0, fg="#E7994F", width=9, font=self.entryFont)
+        self.outputB.bind("<Key>", self.EntryResize)
+
+        # Placing input and output frames, packing input and output entries and labels into them
+        self.inputAFrame.place(x=97, y=200)
+        self.inputA.pack()
         #self.inputB.place()
         #self.inputC.place()
         #self.inputD.place()
@@ -98,7 +116,7 @@ class Calculator:
 
         self.root.mainloop()
 
-    # function to validate the input number for overclock percentage
+    # Function to validate the input number for overclock percentage
     def ValidateOverclock(self, overclock_var):
         try:
             if 250.0 >= float(overclock_var.strip("%")) >= 0.0:
@@ -111,11 +129,30 @@ class Calculator:
                     self.overclockIn.insert(0, overclock + "%")
 
             else:
+                self.root.bell()
                 self.overclockValid.configure(text="The overclock percentage is not valid!\nPlease enter a float "
                                                    "between 0 and 250\nwith 4 or less decimal places.", fg="#B42E2C")
         except ValueError:
+            self.root.bell()
             self.overclockValid.configure(text="The overclock percentage is not valid!\nPlease enter a float between 0 "
                                                "and 250\nwith 4 or less decimal places.", fg="#B42E2C")
 
+    # Function to validate the inserted text is a number
+    def ValidateIsNum(self, inText):
+        if re.search("[?.\d]", inText):
+            return True
+        else:
+            self.root.bell()
+            return False
 
-app = Calculator()
+    @staticmethod
+    # Function to resize entry based on inserted text
+    def EntryResize(event):
+        if re.search("period", event.keysym) or re.search("\d", event.keysym):
+            event.widget.configure(width=len(event.widget.get())+1)
+        elif re.search("BackSpace", event.keysym):
+            event.widget.configure(width=len(event.widget.get())-1)
+
+
+if __name__ == "__main__":
+    app = Calculator()
