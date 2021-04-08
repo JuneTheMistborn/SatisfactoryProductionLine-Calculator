@@ -1,7 +1,7 @@
 """
 Satisfactory production line calculator
 Author: June Simmons
-3/21/2021
+03/21/2021 - 04/07/2021
 Allows calculation of how many items you need to input at a given overclock percentage,
 or the overclock percentage to create the given number of items,
 given how many items per minute it (needs/produces) at given overclock percentage
@@ -56,19 +56,20 @@ class Calculator:
         self.canvas.place(relx=0.5, rely=0.5, anchor=tk.CENTER)
 
         # Entry based overclocking
-        self.overclockIn = tk.Entry(master=self.canvas, bd=0, fg="#E59345", width=9,
+        self.validateCommand = self.root.register(self.ValidateOverclock)
+        self.overclockIn = tk.Entry(master=self.canvas, bd=0, fg="#E59345", width=9, validate="key",
+                                    validatecommand=(self.validateCommand, "%P"),
                                     font=tk.font.Font(family="Myriad Pro", size=20))
-        self.overclockIn.insert(0, "100.0000%")
         self.overclockIn.place(x=175, y=593)
 
-        self.root.bind("<Return>", (lambda event: self.ValidateOverclock(self.overclockIn.get())))
+        #self.root.bind("<Return>", (lambda event: self.ValidateOverclock(self.overclockIn.get())))
 
-        self.overclockValid = tk.Label(master=self.canvas, bd=0, fg="#278E3A",
-                                       text="The overclock percentage is valid!")
-        self.overclockValid.place(x=435, y=593)
+        #self.overclockValid = tk.Label(master=self.canvas, bd=0, fg="#278E3A",
+        #                               text="The overclock percentage is valid!")
+        #self.overclockValid.place(x=435, y=593)
 
         # Slider based overclocking
-        self.overclockSlider = tk.Scale(master=self.canvas, command=self.ValidateOverclock, troughcolor="#FA9549",
+        self.overclockSlider = tk.Scale(master=self.canvas, command=self.SliderToEntry, troughcolor="#FA9549",
                                         orient="horizontal", from_=0.0, to=250.0, length=500, width=45, sliderlength=10,
                                         bd=5, highlightthickness=0, tickinterval=50.0, showvalue=0)
         self.overclockSlider.set(100)
@@ -82,7 +83,7 @@ class Calculator:
         self.outputAFrame = tk.Frame(master=self.canvas, bd=0)
         self.outputBFrame = tk.Frame(master=self.canvas, bd=0)
 
-        # All entries for in and output amounts
+        # All entries for input/output amounts
         self.entryFont = tk.font.Font(family="Myriad Pro", size=8)
         self.validateIsNum = self.root.register(self.ValidateIsNum)
 
@@ -90,63 +91,91 @@ class Calculator:
                              validate="key", validatecommand=(self.validateIsNum, "%S"))
         self.inputA.bind("<Key>", self.EntryResize)
 
-        self.inputB = tk.Entry(bd=0, fg="#E7994F", width=9, font=self.entryFont)
+        self.inputB = Hintry(master=self.inputBFrame, hint="?", bd=0, fg="#E7994F", width=1, font=self.entryFont,
+                             validate="key", validatecommand=(self.validateIsNum, "%S"))
         self.inputB.bind("<Key>", self.EntryResize)
 
-        self.inputC = tk.Entry(bd=0, fg="#E7994F", width=9, font=self.entryFont)
+        self.inputC = Hintry(master=self.inputCFrame, hint="?", bd=0, fg="#E7994F", width=1, font=self.entryFont,
+                             validate="key", validatecommand=(self.validateIsNum, "%S"))
         self.inputC.bind("<Key>", self.EntryResize)
 
-        self.inputD = tk.Entry(bd=0, fg="#E7994F", width=9, font=self.entryFont)
+        self.inputD = Hintry(master=self.inputDFrame, hint="?", bd=0, fg="#E7994F", width=1, font=self.entryFont,
+                             validate="key", validatecommand=(self.validateIsNum, "%S"))
         self.inputD.bind("<Key>", self.EntryResize)
 
-        self.outputA = Hintry(master=self.canvas, hint="?", bd=0, fg="#E7994F", width=9, font=self.entryFont)
+        self.outputA = Hintry(master=self.outputAFrame, hint="?", bd=0, fg="#E7994F", width=1, font=self.entryFont,
+                              validate="key", validatecommand=(self.validateIsNum, "%S"))
         self.outputA.bind("<Key>", self.EntryResize)
 
-        self.outputB = tk.Entry(bd=0, fg="#E7994F", width=9, font=self.entryFont)
+        self.outputB = Hintry(master=self.outputBFrame, hint="?", bd=0, fg="#E7994F", width=1, font=self.entryFont,
+                              validate="key", validatecommand=(self.validateIsNum, "%S"))
         self.outputB.bind("<Key>", self.EntryResize)
 
-        # Placing input and output frames, packing input and output entries and labels into them
-        self.inputAFrame.place(x=97, y=200)
-        self.inputA.pack()
-        #self.inputB.place()
-        #self.inputC.place()
-        #self.inputD.place()
-        self.outputA.place(x=575, y=300)
-        #self.outputB.place()
+        # All "per minute" labels for input/output
+        self.perMinA = tk.Label(master=self.inputAFrame, bd=0, fg="#787879", text=" per minute")
+        self.perMinB = tk.Label(master=self.inputBFrame, bd=0, fg="#787879", text=" per minute")
+        self.perMinC = tk.Label(master=self.inputCFrame, bd=0, fg="#787879", text=" per minute")
+        self.perMinD = tk.Label(master=self.inputDFrame, bd=0, fg="#787879", text=" per minute")
+        self.perMinE = tk.Label(master=self.outputAFrame, bd=0, fg="#787879", text=" per minute")
+        self.perMinF = tk.Label(master=self.outputBFrame, bd=0, fg="#787879", text=" per minute")
+
+        # Placing input and output frames, packing input/output entries and labels into them
+        self.inputAFrame.place(x=99, y=200)
+        self.inputA.pack(side="left")
+        self.perMinA.pack(side="right")
+
+        self.inputBFrame.place(x=99, y=284)
+        self.inputB.pack(side="left")
+        self.perMinB.pack(side="right")
+
+        self.inputCFrame.place(x=99, y=376)
+        self.inputC.pack(side="left")
+        self.perMinC.pack(side="right")
+
+        self.inputDFrame.place(x=99, y=452)
+        self.inputD.pack(side="left")
+        self.perMinD.pack(side="right")
+
+        self.outputAFrame.place(x=604, y=288)
+        self.outputA.pack(side="left")
+        self.perMinE.pack(side="right")
+
+        self.outputBFrame.place(x=604, y=372)
+        self.outputB.pack(side="left")
+        self.perMinF.pack(side="right")
+
+        self.overclockIn.insert(0, "100.0000%")
 
         self.root.mainloop()
 
-    # Function to validate the input number for overclock percentage
-    def ValidateOverclock(self, overclock_var):
-        try:
-            if 250.0 >= float(overclock_var.strip("%")) >= 0.0:
-                overclock = f"{(float(overclock_var.strip('%'))):.4f}"
-                self.overclockValid.configure(text="The overclock percentage is valid!", fg="#278E3A")
-                if float(overclock) == round(float(self.overclockIn.get().strip("%"))):
-                    self.overclockSlider.set(float(overclock))
-                elif float(overclock) != round(float(self.overclockIn.get().strip("%"))):
-                    self.overclockIn.delete(0, "end")
-                    self.overclockIn.insert(0, overclock + "%")
+    # Method to set the overclock entry to the value of the slider
+    def SliderToEntry(self, overclock_var):
+        if overclock_var != str(round(float(self.overclockIn.get().strip("%")))):
+            self.overclockIn.delete("0", "end")
+            self.overclockIn.insert(0, f"{overclock_var}.0000%")
 
-            else:
-                self.root.bell()
-                self.overclockValid.configure(text="The overclock percentage is not valid!\nPlease enter a float "
-                                                   "between 0 and 250\nwith 4 or less decimal places.", fg="#B42E2C")
-        except ValueError:
+    # Method to validate the input number for overclock percentage
+    def ValidateOverclock(self, new_overclock):
+        if len(new_overclock) < 10 and re.fullmatch("\d{0,3}\.\d{0,4}%", new_overclock)\
+           and float(new_overclock.strip("%")) <= 250:
+            self.overclockSlider.set(round(float(new_overclock.strip("%"))))
+            return True
+        elif not new_overclock:
+            return True
+        else:
             self.root.bell()
-            self.overclockValid.configure(text="The overclock percentage is not valid!\nPlease enter a float between 0 "
-                                               "and 250\nwith 4 or less decimal places.", fg="#B42E2C")
+            return False
 
-    # Function to validate the inserted text is a number
-    def ValidateIsNum(self, inText):
-        if re.search("[?.\d]", inText):
+    # Method to validate the inserted text is a number
+    def ValidateIsNum(self, in_text):
+        if re.search("[?.\d]", in_text):
             return True
         else:
             self.root.bell()
             return False
 
     @staticmethod
-    # Function to resize entry based on inserted text
+    # Method to resize entry based on inserted text
     def EntryResize(event):
         if re.search("period", event.keysym) or re.search("\d", event.keysym):
             event.widget.configure(width=len(event.widget.get())+1)
