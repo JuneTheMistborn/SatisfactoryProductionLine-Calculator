@@ -62,12 +62,6 @@ class Calculator:
                                     font=tk.font.Font(family="Myriad Pro", size=20))
         self.overclockIn.place(x=175, y=593)
 
-        #self.root.bind("<Return>", (lambda event: self.ValidateOverclock(self.overclockIn.get())))
-
-        #self.overclockValid = tk.Label(master=self.canvas, bd=0, fg="#278E3A",
-        #                               text="The overclock percentage is valid!")
-        #self.overclockValid.place(x=435, y=593)
-
         # Slider based overclocking
         self.overclockSlider = tk.Scale(master=self.canvas, command=self.SliderToEntry, troughcolor="#FA9549",
                                         orient="horizontal", from_=0.0, to=250.0, length=500, width=45, sliderlength=10,
@@ -88,27 +82,27 @@ class Calculator:
         self.validateIsNum = self.root.register(self.ValidateIsNum)
 
         self.inputA = Hintry(master=self.inputAFrame, hint="?", bd=0, fg="#E7994F", width=1, font=self.entryFont,
-                             validate="key", validatecommand=(self.validateIsNum, "%S"))
+                             validate="key", validatecommand=(self.validateIsNum, "%P"))
         self.inputA.bind("<Key>", self.EntryResize)
 
         self.inputB = Hintry(master=self.inputBFrame, hint="?", bd=0, fg="#E7994F", width=1, font=self.entryFont,
-                             validate="key", validatecommand=(self.validateIsNum, "%S"))
+                             validate="key", validatecommand=(self.validateIsNum, "%P"))
         self.inputB.bind("<Key>", self.EntryResize)
 
         self.inputC = Hintry(master=self.inputCFrame, hint="?", bd=0, fg="#E7994F", width=1, font=self.entryFont,
-                             validate="key", validatecommand=(self.validateIsNum, "%S"))
+                             validate="key", validatecommand=(self.validateIsNum, "%P"))
         self.inputC.bind("<Key>", self.EntryResize)
 
         self.inputD = Hintry(master=self.inputDFrame, hint="?", bd=0, fg="#E7994F", width=1, font=self.entryFont,
-                             validate="key", validatecommand=(self.validateIsNum, "%S"))
+                             validate="key", validatecommand=(self.validateIsNum, "%P"))
         self.inputD.bind("<Key>", self.EntryResize)
 
         self.outputA = Hintry(master=self.outputAFrame, hint="?", bd=0, fg="#E7994F", width=1, font=self.entryFont,
-                              validate="key", validatecommand=(self.validateIsNum, "%S"))
+                              validate="key", validatecommand=(self.validateIsNum, "%P"))
         self.outputA.bind("<Key>", self.EntryResize)
 
         self.outputB = Hintry(master=self.outputBFrame, hint="?", bd=0, fg="#E7994F", width=1, font=self.entryFont,
-                              validate="key", validatecommand=(self.validateIsNum, "%S"))
+                              validate="key", validatecommand=(self.validateIsNum, "%P"))
         self.outputB.bind("<Key>", self.EntryResize)
 
         # All "per minute" labels for input/output
@@ -144,6 +138,7 @@ class Calculator:
         self.outputB.pack(side="left")
         self.perMinF.pack(side="right")
 
+        # Modifying overclock entry at end as to have all necessary resources
         self.overclockIn.insert(0, "100.0000%")
 
         self.root.mainloop()
@@ -168,7 +163,7 @@ class Calculator:
 
     # Method to validate the inserted text is a number
     def ValidateIsNum(self, in_text):
-        if re.search("[?.\d]", in_text):
+        if re.fullmatch("\d*\.?\d*|\?|", in_text):
             return True
         else:
             self.root.bell()
