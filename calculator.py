@@ -82,28 +82,28 @@ class Calculator:
         self.validateIsNum = self.root.register(self.ValidateIsNum)
 
         self.inputA = Hintry(master=self.inputAFrame, hint="?", bd=0, fg="#E7994F", width=1, font=self.entryFont,
-                             validate="key", validatecommand=(self.validateIsNum, "%P"))
-        self.inputA.bind("<Key>", self.EntryResize)
+                             validate="key", validatecommand=(self.validateIsNum, "%P", "%S", "%W", "%d"),
+                             name="inputA")
 
         self.inputB = Hintry(master=self.inputBFrame, hint="?", bd=0, fg="#E7994F", width=1, font=self.entryFont,
-                             validate="key", validatecommand=(self.validateIsNum, "%P"))
-        self.inputB.bind("<Key>", self.EntryResize)
+                             validate="key", validatecommand=(self.validateIsNum, "%P", "%S", "%W", "%d"),
+                             name="inputB")
 
         self.inputC = Hintry(master=self.inputCFrame, hint="?", bd=0, fg="#E7994F", width=1, font=self.entryFont,
-                             validate="key", validatecommand=(self.validateIsNum, "%P"))
-        self.inputC.bind("<Key>", self.EntryResize)
+                             validate="key", validatecommand=(self.validateIsNum, "%P", "%S", "%W", "%d"),
+                             name="inputC")
 
         self.inputD = Hintry(master=self.inputDFrame, hint="?", bd=0, fg="#E7994F", width=1, font=self.entryFont,
-                             validate="key", validatecommand=(self.validateIsNum, "%P"))
-        self.inputD.bind("<Key>", self.EntryResize)
+                             validate="key", validatecommand=(self.validateIsNum, "%P", "%S", "%W", "%d"),
+                             name="inputD")
 
         self.outputA = Hintry(master=self.outputAFrame, hint="?", bd=0, fg="#E7994F", width=1, font=self.entryFont,
-                              validate="key", validatecommand=(self.validateIsNum, "%P"))
-        self.outputA.bind("<Key>", self.EntryResize)
+                              validate="key", validatecommand=(self.validateIsNum, "%P", "%S", "%W", "%d"),
+                              name="outputA")
 
         self.outputB = Hintry(master=self.outputBFrame, hint="?", bd=0, fg="#E7994F", width=1, font=self.entryFont,
-                              validate="key", validatecommand=(self.validateIsNum, "%P"))
-        self.outputB.bind("<Key>", self.EntryResize)
+                              validate="key", validatecommand=(self.validateIsNum, "%P", "%S", "%W", "%d"),
+                              name="outputB")
 
         # All "per minute" labels for input/output
         self.perMinA = tk.Label(master=self.inputAFrame, bd=0, fg="#787879", text=" per minute")
@@ -174,20 +174,20 @@ class Calculator:
             return False
 
     # Method to validate the inserted text is a number
-    def ValidateIsNum(self, in_text):
+    def ValidateIsNum(self, in_text, edit, widget, action):
         if re.fullmatch("\d*\.?\d*|\?|", in_text):
+            self.EntryResize(edit, widget, action)
             return True
         else:
             self.root.bell()
             return False
 
-    @staticmethod
     # Method to resize entry based on inserted text
-    def EntryResize(event):
-        if re.search("period", event.keysym) or re.search("\d", event.keysym):
-            event.widget.configure(width=len(event.widget.get())+1)
-        elif re.search("BackSpace", event.keysym):
-            event.widget.configure(width=len(event.widget.get())-1)
+    def EntryResize(self, edit, widget, action):
+        if action != "0" and re.search("[.\d]", edit):
+            self.root.nametowidget(widget).configure(width=len(self.root.nametowidget(widget).get())+1)
+        elif action == "0":
+            self.root.nametowidget(widget).configure(width=len(self.root.nametowidget(widget).get())-1)
 
 
 if __name__ == "__main__":
