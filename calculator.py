@@ -145,17 +145,29 @@ class Calculator:
 
     # Method to set the overclock entry to the value of the slider
     def SliderToEntry(self, overclock_var):
-        if overclock_var != str(round(float(self.overclockIn.get().strip("%")))):
-            self.overclockIn.delete("0", "end")
-            self.overclockIn.insert(0, f"{overclock_var}.0000%")
+        if self.overclockIn.get() != ".%":
+            overclock_entry = float(self.overclockIn.get().strip("%"))
+        else:
+            overclock_entry = 0.0
+        if overclock_var != str(round(overclock_entry)):
+            self.overclockIn.delete("0", self.overclockIn.get().find("."))
+            self.overclockIn.delete("1", self.overclockIn.get().find("%"))
+            if overclock_entry > int(overclock_var) and overclock_entry != int(overclock_entry):
+                self.overclockIn.insert(0, int(overclock_entry))
+            elif overclock_entry > int(overclock_var) and overclock_entry == int(overclock_entry):
+                self.overclockIn.insert(0, int(overclock_entry)-1)
+            elif overclock_entry < int(overclock_var):
+                self.overclockIn.insert(0, int(overclock_entry)+1)
+            self.overclockIn.insert(self.overclockIn.get().find(".") + 1, "0000")
 
     # Method to validate the input number for overclock percentage
     def ValidateOverclock(self, new_overclock):
-        if len(new_overclock) < 10 and re.fullmatch("\d{0,3}\.\d{0,4}%", new_overclock)\
-           and float(new_overclock.strip("%")) <= 250:
+        if len(new_overclock) < 10 and re.fullmatch("\d{0,3}\.\d{0,4}%", new_overclock) and not new_overclock == ".%"\
+                and float(new_overclock.strip("%")) <= 250:
             self.overclockSlider.set(round(float(new_overclock.strip("%"))))
             return True
-        elif not new_overclock:
+        elif new_overclock == ".%":
+            self.overclockSlider.set(0)
             return True
         else:
             self.root.bell()
