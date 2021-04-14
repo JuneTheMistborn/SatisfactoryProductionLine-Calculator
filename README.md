@@ -9,7 +9,7 @@ Supply and demand calculator for input outputs into factory buildings in Satisfc
 There are two different modes, named by what information they give and indicated by a switch at the top right.\
 There is Input Mode, which will give the amount of item input required at ay given overclock percentage.\
 There is also Overclock Mode, which will give the required overclock percentage to produce a given amount of items.\
-The default mode is Input Mode, to change it you must click on the switch at the top right of the screen.\
+The default mode is Input Mode, to change it you must click on the switch at the top right of the screen.
 
 On the top left of the screen, there are 6 entries, inputs 1-4 and outputs 1-2. These are the input and output amounts at 100% overclock.\
 Simply type in the number of items required (input) and the number of items produced (output) at 100% overclock.\
