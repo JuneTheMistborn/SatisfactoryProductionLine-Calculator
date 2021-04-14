@@ -2,7 +2,7 @@
 WIP, currently useless
 
 
-Supply and demand calculator for input outputs into factory buildings in Satisfcatory.<br/>
+Supply and demand calculator for inputs and outputs with factory buildings in Satisfcatory.<br/>
 <br/>
 ## Usage
 ### Modes
