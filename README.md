@@ -5,6 +5,7 @@ WIP, currently useless
 Supply and demand calculator for input outputs into factory buildings in Satisfcatory.
 
 
+
 ## Usage
 There are two different modes, named by what information they give and indicated by a switch at the top right.
 There is Input Mode, which will give the amount of item input required at ay given overclock percentage.
