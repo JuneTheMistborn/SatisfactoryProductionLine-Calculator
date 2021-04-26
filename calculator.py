@@ -1,7 +1,7 @@
 """
 Satisfactory production line calculator
 Author: June Simmons
-03/21/2021 - 04/07/2021
+03/21/2021 - 04/26/2021
 Allows calculation of how many items you need to input at a given overclock percentage,
 or the overclock percentage to create the given number of items,
 given how many items per minute it (needs/produces) at given overclock percentage
@@ -39,6 +39,16 @@ class Hintry(tk.Entry):
     def renew_hint(self, a):
         if not self.get():
             self.input_hint()
+
+
+class ToggleSwitch(tk.Label):
+    def __init__(self, master=None, variable=None, *args, **kwargs):
+        super().__init__(master, *args, **kwargs)
+        self.var = tk.BooleanVar() if variable is None else variable
+        self.images = [ImageTk.PhotoImage(Image.open("outputmode.png")),ImageTk.PhotoImage(Image.open("inputmode.png"))]
+        self.bind('<Button-1>', lambda e: self.var.set(not self.var.get()))
+        self.var.trace('w', lambda *a: self.config(image=self.images[self.var.get()]))
+        self.var.set(True)
 
 
 # Initializing window
@@ -137,6 +147,9 @@ class Calculator:
         self.outputBFrame.place(x=604, y=372)
         self.outputB.pack(side="left")
         self.perMinF.pack(side="right")
+
+        self.switch = ToggleSwitch(self.canvas, bd=0, bg="#1a1a1a")
+        self.switch.place(x=20, y=75)
 
         # Modifying overclock entry at end as to have all necessary resources
         self.overclockIn.insert(0, "100.0000%")
