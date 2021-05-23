@@ -141,11 +141,6 @@ class Calculator:
         self.outputB.pack(side="left")
         self.perMinF.pack(side="right")
 
-        self.switch = tk.Button(self.canvas, bd=0, bg="#1A1A1A", fg="#FA9549", activebackground="#0F0F0F",
-                                activeforeground="#FA9549", text="Input")
-        self.switch.config(command=lambda: self.ModeChange(self.switch))
-        self.switch.place(x=20, y=75)
-
         # Modifying overclock entry at end as to have all necessary resources
         self.overclockIn.insert(0, "100.0000%")
 
@@ -197,26 +192,8 @@ class Calculator:
         elif action == "0":
             self.root.nametowidget(widget).configure(width=len(self.root.nametowidget(widget).get())-1)
 
-    # Method to change the mode of the calculator from input to overclock
-    def ModeChange(self, btn):
-        if btn["text"] == "Input":
-            btn.config(text="Overclock")
-            self.outputA.config(state="normal")
-            self.outputB.config(state="normal")
-            self.inputA.config(state="disabled")
-            self.inputB.config(state="disabled")
-            self.inputC.config(state="disabled")
-            self.inputD.config(state="disabled")
-            self.overclockSlider.config(state="disabled")
-        elif btn["text"] == "Overclock":
-            btn.config(text="Input")
-            self.outputA.config(state="disabled")
-            self.outputB.config(state="disabled")
-            self.inputA.config(state="normal")
-            self.inputB.config(state="normal")
-            self.inputC.config(state="normal")
-            self.inputD.config(state="normal")
-            self.overclockSlider.config(state="normal")
+    # Method to calculate the input and overclock percentage
+
 
 
 if __name__ == "__main__":
