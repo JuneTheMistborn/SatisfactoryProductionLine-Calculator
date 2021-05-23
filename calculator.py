@@ -1,7 +1,7 @@
 """
 Satisfactory production line calculator
 Author: June Simmons
-03/21/2021 - 04/26/2021
+03/21/2021 - 05/22/2021
 Allows calculation of how many items you need to input at a given overclock percentage,
 or the overclock percentage to create the given number of items,
 given how many items per minute it (needs/produces) at given overclock percentage
@@ -39,16 +39,6 @@ class Hintry(tk.Entry):
     def renew_hint(self, a):
         if not self.get():
             self.input_hint()
-
-
-class ToggleSwitch(tk.Label):
-    def __init__(self, master=None, variable=None, *args, **kwargs):
-        super().__init__(master, *args, **kwargs)
-        self.var = tk.BooleanVar() if variable is None else variable
-        self.images = [ImageTk.PhotoImage(Image.open("outputmode.png")),ImageTk.PhotoImage(Image.open("inputmode.png"))]
-        self.bind('<Button-1>', lambda e: self.var.set(not self.var.get()))
-        self.var.trace('w', lambda *a: self.config(image=self.images[self.var.get()]))
-        self.var.set(True)
 
 
 # Initializing window
@@ -115,6 +105,9 @@ class Calculator:
                               validate="key", validatecommand=(self.validateIsNum, "%P", "%S", "%W", "%d"),
                               name="outputB")
 
+        self.outputA.config(state="disabled")
+        self.outputB.config(state="disabled")
+
         # All "per minute" labels for input/output
         self.perMinA = tk.Label(master=self.inputAFrame, bd=0, fg="#787879", text=" per minute")
         self.perMinB = tk.Label(master=self.inputBFrame, bd=0, fg="#787879", text=" per minute")
@@ -148,7 +141,9 @@ class Calculator:
         self.outputB.pack(side="left")
         self.perMinF.pack(side="right")
 
-        self.switch = ToggleSwitch(self.canvas, bd=0, bg="#1a1a1a")
+        self.switch = tk.Button(self.canvas, bd=0, bg="#1A1A1A", fg="#FA9549", activebackground="#0F0F0F",
+                                activeforeground="#FA9549", text="Input")
+        self.switch.config(command=lambda: self.ModeChange(self.switch))
         self.switch.place(x=20, y=75)
 
         # Modifying overclock entry at end as to have all necessary resources
@@ -201,6 +196,27 @@ class Calculator:
             self.root.nametowidget(widget).configure(width=len(self.root.nametowidget(widget).get())+1)
         elif action == "0":
             self.root.nametowidget(widget).configure(width=len(self.root.nametowidget(widget).get())-1)
+
+    # Method to change the mode of the calculator from input to overclock
+    def ModeChange(self, btn):
+        if btn["text"] == "Input":
+            btn.config(text="Overclock")
+            self.outputA.config(state="normal")
+            self.outputB.config(state="normal")
+            self.inputA.config(state="disabled")
+            self.inputB.config(state="disabled")
+            self.inputC.config(state="disabled")
+            self.inputD.config(state="disabled")
+            self.overclockSlider.config(state="disabled")
+        elif btn["text"] == "Overclock":
+            btn.config(text="Input")
+            self.outputA.config(state="disabled")
+            self.outputB.config(state="disabled")
+            self.inputA.config(state="normal")
+            self.inputB.config(state="normal")
+            self.inputC.config(state="normal")
+            self.inputD.config(state="normal")
+            self.overclockSlider.config(state="normal")
 
 
 if __name__ == "__main__":
