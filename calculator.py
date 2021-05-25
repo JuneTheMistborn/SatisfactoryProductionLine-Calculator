@@ -1,7 +1,7 @@
 """
 Satisfactory production line calculator
 Author: June Simmons
-03/21/2021 - 05/22/2021
+03/21/2021 - 05/25/2021
 Allows calculation of how many items you need to input at a given overclock percentage,
 or the overclock percentage to create the given number of items,
 given how many items per minute it (needs/produces) at given overclock percentage
@@ -22,23 +22,34 @@ class Hintry(tk.Entry):
         self.fg_color = self["fg"]
         self.hint_color = color
 
-        self.bind("<FocusIn>", self.clear_hint)
-        self.bind("<FocusOut>", self.renew_hint)
+        self.bind("<FocusIn>", lambda a: [self.clear_hint(), self.resize(a)])
+        self.bind("<FocusOut>", lambda a: [self.renew_hint(), self.resize(a)])
+
+        self.bind("<Key>", self.resize)
 
         self.input_hint()
 
     def input_hint(self):
         self.insert("0", self.hint)
         self["fg"] = self.hint_color
+        self["width"] = len(self.hint)
 
-    def clear_hint(self, a):
+    def clear_hint(self):
         if self["fg"] == self.hint_color:
             self.delete("0", "end")
             self["fg"] = self.fg_color
 
-    def renew_hint(self, a):
+    def renew_hint(self):
         if not self.get():
             self.input_hint()
+
+    def resize(self, a):
+        if a.keysym == "Left" or a.keysym == "Right":
+            pass
+        elif a.char != "\x08":
+            self["width"] = len(self.get())+1
+        elif a.char == "\x08":
+            self["width"] = len(self.get())-1
 
 
 # Initializing window
@@ -178,19 +189,11 @@ class Calculator:
 
     # Method to validate the inserted text is a number
     def ValidateIsNum(self, in_text, edit, widget, action):
-        if re.fullmatch("\d*\.?\d*|\?|", in_text):
-            self.EntryResize(edit, widget, action)
+        if re.fullmatch("\d*\.?\d*|\?|Items per min at 100%|", in_text):
             return True
         else:
             self.root.bell()
             return False
-
-    # Method to resize entry based on inserted text
-    def EntryResize(self, edit, widget, action):
-        if action != "0" and re.search("[.\d]", edit):
-            self.root.nametowidget(widget).configure(width=len(self.root.nametowidget(widget).get())+1)
-        elif action == "0":
-            self.root.nametowidget(widget).configure(width=len(self.root.nametowidget(widget).get())-1)
 
     # Method to calculate the input and overclock percentage
 
