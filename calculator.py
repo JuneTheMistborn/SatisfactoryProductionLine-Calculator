@@ -81,10 +81,6 @@ class Calculator:
         self.overclockSlider.place(x=170, y=639)
 
         # Frames to hold input/output entries and labels so they properly resize
-        self.inputAFrame = tk.Frame(master=self.canvas, bd=0)
-        self.inputBFrame = tk.Frame(master=self.canvas, bd=0)
-        self.inputCFrame = tk.Frame(master=self.canvas, bd=0)
-        self.inputDFrame = tk.Frame(master=self.canvas, bd=0)
         self.outputAFrame = tk.Frame(master=self.canvas, bd=0)
         self.outputBFrame = tk.Frame(master=self.canvas, bd=0)
 
@@ -92,62 +88,65 @@ class Calculator:
         self.entryFont = tk.font.Font(family="Myriad Pro", size=8)
         self.validateIsNum = self.root.register(self.ValidateIsNum)
 
-        self.inputA = Hintry(master=self.inputAFrame, hint="?", bd=0, fg="#E7994F", width=1, font=self.entryFont,
-                             validate="key", validatecommand=(self.validateIsNum, "%P", "%S", "%W", "%d"),
-                             name="inputA")
+        self.inputA100 = Hintry(master=self.canvas, hint="Items per min at 100%", bd=0, fg="#E7994F", width=1,
+                                font=self.entryFont, name="inputA100",
+                                validate="key", validatecommand=(self.validateIsNum, "%P", "%S", "%W", "%d"))
 
-        self.inputB = Hintry(master=self.inputBFrame, hint="?", bd=0, fg="#E7994F", width=1, font=self.entryFont,
-                             validate="key", validatecommand=(self.validateIsNum, "%P", "%S", "%W", "%d"),
-                             name="inputB")
+        self.inputB100 = Hintry(master=self.canvas, hint="Items per min at 100%", bd=0, fg="#E7994F", width=1,
+                                font=self.entryFont, name="inputB100",
+                                validate="key", validatecommand=(self.validateIsNum, "%P", "%S", "%W", "%d"))
 
-        self.inputC = Hintry(master=self.inputCFrame, hint="?", bd=0, fg="#E7994F", width=1, font=self.entryFont,
-                             validate="key", validatecommand=(self.validateIsNum, "%P", "%S", "%W", "%d"),
-                             name="inputC")
+        self.inputC100 = Hintry(master=self.canvas, hint="Items per min at 100%", bd=0, fg="#E7994F", width=1,
+                                font=self.entryFont, name="inputC100",
+                                validate="key", validatecommand=(self.validateIsNum, "%P", "%S", "%W", "%d"))
 
-        self.inputD = Hintry(master=self.inputDFrame, hint="?", bd=0, fg="#E7994F", width=1, font=self.entryFont,
-                             validate="key", validatecommand=(self.validateIsNum, "%P", "%S", "%W", "%d"),
-                             name="inputD")
+        self.inputD100 = Hintry(master=self.canvas, hint="Items per min at 100%", bd=0, fg="#E7994F", width=1,
+                                font=self.entryFont, name="inputD100",
+                                validate="key", validatecommand=(self.validateIsNum, "%P", "%S", "%W", "%d"))
 
         self.outputA = Hintry(master=self.outputAFrame, hint="?", bd=0, fg="#E7994F", width=1, font=self.entryFont,
                               validate="key", validatecommand=(self.validateIsNum, "%P", "%S", "%W", "%d"),
                               name="outputA")
 
+        self.outputA100 = Hintry(master=self.canvas, hint="Items per min at 100%", bd=0, fg="#E7994F", width=1,
+                                 font=self.entryFont, name="outputA100",
+                                 validate="key", validatecommand=(self.validateIsNum, "%P", "%S", "%W", "%d"))
+
         self.outputB = Hintry(master=self.outputBFrame, hint="?", bd=0, fg="#E7994F", width=1, font=self.entryFont,
                               validate="key", validatecommand=(self.validateIsNum, "%P", "%S", "%W", "%d"),
                               name="outputB")
 
-        self.outputA.config(state="disabled")
-        self.outputB.config(state="disabled")
+        self.outputB100 = Hintry(master=self.canvas, hint="Items per min at 100%", bd=0, fg="#E7994F", width=1,
+                                 font=self.entryFont, name="outputB100",
+                                 validate="key", validatecommand=(self.validateIsNum, "%P", "%S", "%W", "%d"))
 
         # All "per minute" labels for input/output
-        self.perMinA = tk.Label(master=self.inputAFrame, bd=0, fg="#787879", text=" per minute")
-        self.perMinB = tk.Label(master=self.inputBFrame, bd=0, fg="#787879", text=" per minute")
-        self.perMinC = tk.Label(master=self.inputCFrame, bd=0, fg="#787879", text=" per minute")
-        self.perMinD = tk.Label(master=self.inputDFrame, bd=0, fg="#787879", text=" per minute")
-        self.perMinE = tk.Label(master=self.outputAFrame, bd=0, fg="#787879", text=" per minute")
-        self.perMinF = tk.Label(master=self.outputBFrame, bd=0, fg="#787879", text=" per minute")
+        self.perMinA = tk.Label(master=self.canvas, bd=0, fg="#787879", text="? per minute")
+        self.perMinB = tk.Label(master=self.canvas, bd=0, fg="#787879", text="? per minute")
+        self.perMinC = tk.Label(master=self.canvas, bd=0, fg="#787879", text="? per minute")
+        self.perMinD = tk.Label(master=self.canvas, bd=0, fg="#787879", text="? per minute")
+        self.perMinE = tk.Label(master=self.outputAFrame, bd=0, fg="#787879", text="? per minute")
+        self.perMinF = tk.Label(master=self.outputBFrame, bd=0, fg="#787879", text="? per minute")
 
         # Placing input and output frames, packing input/output entries and labels into them
-        self.inputAFrame.place(x=99, y=200)
-        self.inputA.pack(side="left")
-        self.perMinA.pack(side="right")
+        self.inputA100.place(x=153, y=182)
+        self.perMinA.place(x=99, y=200)
 
-        self.inputBFrame.place(x=99, y=284)
-        self.inputB.pack(side="left")
-        self.perMinB.pack(side="right")
+        self.inputB100.place(x=153, y=266)
+        self.perMinB.place(x=99, y=284)
 
-        self.inputCFrame.place(x=99, y=376)
-        self.inputC.pack(side="left")
-        self.perMinC.pack(side="right")
+        self.inputC100.place(x=153, y=358)
+        self.perMinC.place(x=99, y=376)
 
-        self.inputDFrame.place(x=99, y=452)
-        self.inputD.pack(side="left")
-        self.perMinD.pack(side="right")
+        self.inputD100.place(x=153, y=434)
+        self.perMinD.place(x=99, y=452)
 
+        self.outputA100.place(x=672, y=270)
         self.outputAFrame.place(x=604, y=288)
         self.outputA.pack(side="left")
         self.perMinE.pack(side="right")
 
+        self.outputB100.place(x=672, y=354)
         self.outputBFrame.place(x=604, y=372)
         self.outputB.pack(side="left")
         self.perMinF.pack(side="right")
