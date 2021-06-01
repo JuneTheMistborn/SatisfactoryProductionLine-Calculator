@@ -1,5 +1,5 @@
 # SatisfactoryProductionLine-Calculator
-WIP, currently useless
+WIP, currently partially functional but chock full of bugs
 
 
 Supply and demand calculator for inputs and outputs with factory buildings in Satisfcatory.<br/>
