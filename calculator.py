@@ -22,9 +22,9 @@ class Resizentry(tk.Entry):
         if key == "Left" or key == "Right":
             pass
         elif char != "\x08":
-            self["width"] = len(self.get())+1
+            self["width"] = len(self.get()) + 1
         elif char == "\x08":
-            self["width"] = len(self.get())-1
+            self["width"] = len(self.get()) - 1
 
 
 # Custom entry with hint/placeholder
@@ -85,6 +85,10 @@ class Calculator:
         self.overclockSlider.place(x=170, y=639)
 
         # Frames to hold input/output entries and labels so they properly resize
+        self.inputAFrame = tk.Frame(master=self.canvas, bd=0)
+        self.inputBFrame = tk.Frame(master=self.canvas, bd=0)
+        self.inputCFrame = tk.Frame(master=self.canvas, bd=0)
+        self.inputDFrame = tk.Frame(master=self.canvas, bd=0)
         self.outputAFrame = tk.Frame(master=self.canvas, bd=0)
         self.outputBFrame = tk.Frame(master=self.canvas, bd=0)
 
@@ -124,26 +128,40 @@ class Calculator:
                                  font=self.entryFont, name="outputB100", bg="SystemButtonFace",
                                  validate="key", validatecommand=(self.validateIsNum, "%P", "%W", "%S"))
 
+        # Input text containers
+        self.inputA = tk.Label(master=self.inputAFrame, bd=0, fg="#787879", text="?")
+        self.inputB = tk.Label(master=self.inputBFrame, bd=0, fg="#787879", text="?")
+        self.inputC = tk.Label(master=self.inputCFrame, bd=0, fg="#787879", text="?")
+        self.inputD = tk.Label(master=self.inputDFrame, bd=0, fg="#787879", text="?")
+
         # All "per minute" labels for input/output
-        self.perMinA = tk.Label(master=self.canvas, bd=0, fg="#787879", text="? per minute")
-        self.perMinB = tk.Label(master=self.canvas, bd=0, fg="#787879", text="? per minute")
-        self.perMinC = tk.Label(master=self.canvas, bd=0, fg="#787879", text="? per minute")
-        self.perMinD = tk.Label(master=self.canvas, bd=0, fg="#787879", text="? per minute")
+        self.perMinA = tk.Label(master=self.inputAFrame, bd=0, fg="#787879", text=" per minute")
+        self.perMinB = tk.Label(master=self.inputBFrame, bd=0, fg="#787879", text=" per minute")
+        self.perMinC = tk.Label(master=self.inputCFrame, bd=0, fg="#787879", text=" per minute")
+        self.perMinD = tk.Label(master=self.inputDFrame, bd=0, fg="#787879", text=" per minute")
         self.perMinE = tk.Label(master=self.outputAFrame, bd=0, fg="#787879", text=" per minute")
         self.perMinF = tk.Label(master=self.outputBFrame, bd=0, fg="#787879", text=" per minute")
 
         # Placing input and output frames, packing input/output entries and labels into them
         self.inputA100.place(x=153, y=182)
-        self.perMinA.place(x=99, y=200)
+        self.inputAFrame.place(x=99, y=200)
+        self.inputA.pack(side="left")
+        self.perMinA.pack(side="right")
 
         self.inputB100.place(x=153, y=266)
-        self.perMinB.place(x=99, y=284)
+        self.inputBFrame.place(x=99, y=284)
+        self.inputB.pack(side="left")
+        self.perMinB.pack(side="right")
 
         self.inputC100.place(x=153, y=358)
-        self.perMinC.place(x=99, y=376)
+        self.inputCFrame.place(x=99, y=376)
+        self.inputC.pack(side="left")
+        self.perMinC.pack(side="right")
 
         self.inputD100.place(x=153, y=434)
-        self.perMinD.place(x=99, y=452)
+        self.inputDFrame.place(x=99, y=452)
+        self.inputD.pack(side="left")
+        self.perMinD.pack(side="right")
 
         self.outputA100.place(x=672, y=270)
         self.outputAFrame.place(x=604, y=288)
@@ -159,6 +177,8 @@ class Calculator:
         self.outputA100val = ""
         self.outputB100val = ""
         self.newOverclock = ""
+        self.multiplier = 1
+        self.editedWidget = ""
 
         # Modifying overclock entry at end as to have all necessary resources
         self.overclockIn.insert(0, "100.0000%")
@@ -177,15 +197,15 @@ class Calculator:
             if overclock_entry > int(overclock_var) and overclock_entry != int(overclock_entry):
                 self.overclockIn.insert(0, int(overclock_entry))
             elif overclock_entry > int(overclock_var) and overclock_entry == int(overclock_entry):
-                self.overclockIn.insert(0, int(overclock_entry)-1)
+                self.overclockIn.insert(0, int(overclock_entry) - 1)
             elif overclock_entry < int(overclock_var):
-                self.overclockIn.insert(0, int(overclock_entry)+1)
+                self.overclockIn.insert(0, int(overclock_entry) + 1)
             self.overclockIn.insert(self.overclockIn.get().find(".") + 1, "0000")
 
     # Method to validate the input number for overclock percentage
     def ValidateOverclock(self, new_overclock):
         if len(new_overclock) < 33 and re.fullmatch("\d*\.\d{0,4}%", new_overclock) and not new_overclock == ".%":
-            self.Calculations(new_overclock, "overclock", "")
+            self.NewMulti(new_overclock, "overclock", "")
             if float(new_overclock.strip("%")) >= 250:
                 self.overclockSlider.set(250)
             else:
@@ -202,62 +222,77 @@ class Calculator:
     def ValidateIsNum(self, in_text, widget, edit):
         if re.fullmatch("\d*\.?\d*|\?|Items per min at 100%|", in_text):
             if re.fullmatch("\d*\.?\d*", in_text):
-                self.Calculations(in_text, widget, edit)
+                self.NewMulti(in_text, widget, edit)
             return True
         else:
             self.root.bell()
             return False
 
     # Method to calculate the input and overclock percentage
-    """Use validate command to get name of widget: if name == outputb100 then divide outputb100 by outputb to get
-    multiplier. Use validate function option to get text after edit and use that fir outputb100."""
-    def Calculations(self, in_text, widget, edit):
+    def NewMulti(self, in_text, widget, edit):
         multiplier = 1
         # Finding what to multiply numbers by to get correct in/outputs
         try:
             if widget == "overclock" and re.fullmatch("\d*\.\d{0,4}%", in_text):
-                multiplier = float(in_text.strip("%"))/100
+                multiplier = float(in_text.strip("%")) / 100
             elif re.search("outputA$", widget) and re.fullmatch("\d*\.?\d*", in_text):
-                multiplier = float(in_text)/float(self.outputA100val)
+                multiplier = float(in_text) / float(self.outputA100val)
             elif re.search("outputB$", widget) and re.fullmatch("\d*\.\d*", in_text):
-                multiplier = float(in_text)/float(self.outputB100val)
+                multiplier = float(in_text) / float(self.outputB100val)
 
             # Multiplying multiplier by numbers in 100% entries to get current in/output
-            if float(in_text.strip("%"))/100 == multiplier:
+            if float(in_text.strip("%")) / 100 == multiplier:
                 pass
-            elif float(self.overclockIn.get().strip("%"))/100 != multiplier:
-                self.newOverclock = str(float(self.overclockIn.get().strip("%"))*multiplier)
+            elif float(self.overclockIn.get().strip("%")) / 100 != multiplier:
+                self.newOverclock = str(float(self.overclockIn.get().strip("%")) * multiplier)
                 self.overclockIn.delete(0, self.overclockIn.get().find("."))
                 self.overclockIn.delete(1, self.overclockIn.get().find("%"))
                 self.overclockIn.insert(0, self.newOverclock[0:self.newOverclock.find(".")])
-                self.overclockIn.insert(self.newOverclock.find(".")+1,
-                                        f"{float(self.newOverclock[self.newOverclock.find('.'):self.newOverclock.find('%')]):.4f}"[2:])
+                self.overclockIn.insert(self.newOverclock.find(".") + 1,
+                                        (f"{float(self.newOverclock[self.newOverclock.find('.'):self.newOverclock.find('%')]):.4f}"[2:]))
         except ValueError:
             pass
 
-        # Changing displayed text to be accurate
-        if re.fullmatch("\d*\.?\d*", in_text) and not re.fullmatch("", in_text) and re.search("inputA100", widget):
-            self.perMinA["text"] = str(float(in_text)*multiplier)+" per minute"
-        if re.fullmatch("\d*\.?\d*", in_text) and not re.fullmatch("", in_text) and re.search("inputB100", widget):
-            self.perMinB["text"] = str(float(in_text)*multiplier)+" per minute"
-        if re.fullmatch("\d*\.?\d*", in_text) and not re.fullmatch("", in_text) and re.search("inputC100", widget):
-            self.perMinC["text"] = str(float(in_text)*multiplier)+" per minute"
-        if re.fullmatch("\d*\.?\d*", in_text) and not re.fullmatch("", in_text) and re.search("inputD100", widget):
-            self.perMinD["text"] = str(float(in_text)*multiplier)+" per minute"
-
         if re.fullmatch("\d*\.?\d*", in_text) and not re.fullmatch("", in_text) and re.search("outputA100", widget):
+            self.editedWidget = widget
             self.outputA100val = in_text
             self.outputA.clear_hint()
+            self.outputA.config(validate="none")
             self.outputA.delete(0, "end")
-            self.outputA.insert(0, str(float(in_text)*multiplier))
+            self.outputA.insert(0, str(float(self.outputA100val) * multiplier))
+            self.outputA.after_idle(self.ValidateSet, self.outputA)
             self.outputA.resize("", edit)
 
         if re.fullmatch("\d*\.?\d*", in_text) and not re.fullmatch("", in_text) and re.search("outputB100", widget):
+            self.editedWidget = widget
             self.outputB100val = in_text
             self.outputB.clear_hint()
+            self.outputB.config(validate="none")
             self.outputB.delete(0, "end")
-            self.outputB.insert(0, str(float(in_text)*multiplier))
+            self.outputB.insert(0, str(float(in_text) * multiplier))
+            self.outputB.after_idle(self.ValidateSet, self.outputB)
             self.outputB.resize("", edit)
+
+        if re.fullmatch("\d*\.?\d*", in_text) and re.search("inputA100", widget):
+            self.editedWidget = widget
+            if in_text != "":
+                self.inputA["fg"] = "#E7994F"
+                self.inputA["text"] = str(float(in_text))
+            elif in_text == "":
+                self.inputA["fg"] = "grey"
+                self.inputA["text"] = "?"
+
+        '''if self.multiplier != multiplier:
+            self.Calculate(multiplier, self.editedWidget)
+        self.multiplier = multiplier'''
+
+    # Calculate the new values of in/outputs based on multiplier and put them into the text/entries
+    def Calculate(self, multiplier, widget):
+        pass
+
+    @staticmethod
+    def ValidateSet(widget):
+        widget.config(validate="key")
 
 
 if __name__ == "__main__":
