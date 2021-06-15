@@ -273,21 +273,21 @@ class Calculator:
                 self.inputA["text"] = str(float(self.inputA100Val)*multiplier)
         if re.fullmatch("\d*\.?\d*", self.inputB100.get()):
             if self.inputB100Val == "":
-                self.inputB["fg"] = "#grey"
+                self.inputB["fg"] = "grey"
                 self.inputB["text"] = "?"
             elif self.inputB100Val != "":
                 self.inputB["fg"] = "#E7994F"
                 self.inputB["text"] = str(float(self.inputB100Val)*multiplier)
         if re.fullmatch("\d*\.?\d*", self.inputC100.get()):
             if self.inputC100Val == "":
-                self.inputC["fg"] = "#grey"
+                self.inputC["fg"] = "#rey"
                 self.inputC["text"] = "?"
             elif self.inputC100Val != "":
                 self.inputC["fg"] = "#E7994F"
                 self.inputC["text"] = str(float(self.inputC100Val)*multiplier)
         if re.fullmatch("\d*\.?\d*", self.inputD100.get()):
             if self.inputD100Val == "":
-                self.inputD["fg"] = "#grey"
+                self.inputD["fg"] = "grey"
                 self.inputD["text"] = "?"
             elif self.inputD100Val != "":
                 self.inputD["fg"] = "#E7994F"
