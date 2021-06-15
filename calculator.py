@@ -190,7 +190,6 @@ class Calculator:
 
     # Method to set the overclock entry to the value of the slider
     def SliderToEntry(self, overclock_var):
-        print(overclock_var)
         if self.overclockIn.get() != ".%":
             overclock_entry = float(self.overclockIn.get().strip("%"))
         else:
