@@ -227,8 +227,8 @@ class Calculator:
                     self.inputB100Val = in_text
                 if re.search("inputC100", widget):
                     self.inputC100Val = in_text
-                if re.search("inputC100", widget):
-                    self.inputC100Val = in_text
+                if re.search("inputD100", widget):
+                    self.inputD100Val = in_text
                 if re.search("outputA100", widget):
                     self.outputA100Val = in_text
                 if re.search("outputB100", widget):
