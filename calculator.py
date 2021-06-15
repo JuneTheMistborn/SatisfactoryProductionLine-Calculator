@@ -230,9 +230,7 @@ class Calculator:
                 if re.search("inputD100", widget):
                     self.inputD100Val = in_text
                 if re.search("outputA100", widget):
-                    print("here1" + in_text)
                     self.outputA100Val = in_text
-                    print("here2" + self.outputA100Val)
                 if re.search("outputB100", widget):
                     self.outputB100Val = in_text
 
@@ -267,17 +265,33 @@ class Calculator:
     # Calculate the new values of in/outputs based on multiplier and put them into the text/entries
     def Calculate(self, multiplier, edit, index):
         if re.fullmatch("\d*\.?\d*", self.inputA100.get()):
-            self.inputA["fg"] = "#E7994F"
-            self.inputA["text"] = str(float(self.inputA100Val)*multiplier)
+            if self.inputA100Val == "":
+                self.inputA["fg"] = "grey"
+                self.inputA["text"] = "?"
+            elif self.inputA100Val != "":
+                self.inputA["fg"] = "#E7994F"
+                self.inputA["text"] = str(float(self.inputA100Val)*multiplier)
         if re.fullmatch("\d*\.?\d*", self.inputB100.get()):
-            self.inputB["fg"] = "#E7994F"
-            self.inputB["text"] = str(float(self.inputB100Val)*multiplier)
+            if self.inputB100Val == "":
+                self.inputB["fg"] = "#grey"
+                self.inputB["text"] = "?"
+            elif self.inputB100Val != "":
+                self.inputB["fg"] = "#E7994F"
+                self.inputB["text"] = str(float(self.inputB100Val)*multiplier)
         if re.fullmatch("\d*\.?\d*", self.inputC100.get()):
-            self.inputC["fg"] = "#E7994F"
-            self.inputC["text"] = str(float(self.inputC100Val)*multiplier)
+            if self.inputC100Val == "":
+                self.inputC["fg"] = "#grey"
+                self.inputC["text"] = "?"
+            elif self.inputC100Val != "":
+                self.inputC["fg"] = "#E7994F"
+                self.inputC["text"] = str(float(self.inputC100Val)*multiplier)
         if re.fullmatch("\d*\.?\d*", self.inputD100.get()):
-            self.inputD["fg"] = "#E7994F"
-            self.inputD["text"] = str(float(self.inputD100Val)*multiplier)
+            if self.inputD100Val == "":
+                self.inputD["fg"] = "#grey"
+                self.inputD["text"] = "?"
+            elif self.inputD100Val != "":
+                self.inputD["fg"] = "#E7994F"
+                self.inputD["text"] = str(float(self.inputD100Val)*multiplier)
 
         if re.fullmatch("\d*\.?\d*", self.outputA100Val):
             if self.outputA100Val == "":
