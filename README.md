@@ -1,6 +1,5 @@
 # SatisfactoryProductionLine-Calculator
-WIP, currently partially functional but chock full of bugs
-
+1.0 fully functional and working as intended, still open to suggestions.
 
 Supply and demand calculator for inputs and outputs with factory buildings in Satisfcatory.<br/>
 <br/>
