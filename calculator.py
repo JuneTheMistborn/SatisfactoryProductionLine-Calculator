@@ -230,7 +230,9 @@ class Calculator:
                 if re.search("inputD100", widget):
                     self.inputD100Val = in_text
                 if re.search("outputA100", widget):
+                    print("here1" + in_text)
                     self.outputA100Val = in_text
+                    print("here2" + self.outputA100Val)
                 if re.search("outputB100", widget):
                     self.outputB100Val = in_text
 
@@ -277,25 +279,33 @@ class Calculator:
             self.inputD["fg"] = "#E7994F"
             self.inputD["text"] = str(float(self.inputD100Val)*multiplier)
 
-        if re.fullmatch("\d*\.?\d*", self.outputA100.get()):
-            self.outputA.clear_hint()
-            self.outputA.config(validate="none")
-            self.outputA.delete(0, "end")
-            self.outputA.insert(0, str(float(self.outputA100Val) * multiplier))
-            self.outputA.after_idle(self.ValidateSet, self.outputA)
-            self.outputA.resize("", "")
+        if re.fullmatch("\d*\.?\d*", self.outputA100Val):
+            if self.outputA100Val == "":
+                self.outputA.delete(0, "end")
+                self.outputA.renew_hint()
+            elif self.outputA100Val != "":
+                self.outputA.clear_hint()
+                self.outputA.config(validate="none")
+                self.outputA.delete(0, "end")
+                self.outputA.insert(0, str(float(self.outputA100Val) * multiplier))
+                self.outputA.after_idle(self.ValidateSet, self.outputA)
+                self.outputA.resize("", "")
             if edit == "0":
                 self.outputA.icursor(index)
             elif edit == "1":
                 self.outputA.icursor(int(index)+1)
 
-        if re.fullmatch("\d*\.?\d*", self.outputB100.get()):
-            self.outputB.clear_hint()
-            self.outputB.config(validate="none")
-            self.outputB.delete(0, "end")
-            self.outputB.insert(0, str(float(self.outputB100Val) * multiplier))
-            self.outputB.after_idle(self.ValidateSet, self.outputB)
-            self.outputB.resize("", "")
+        if re.fullmatch("\d*\.?\d*", self.outputB100Val):
+            if self.outputB100Val == "":
+                self.outputB.delete(0, "end")
+                self.outputB.renew_hint()
+            elif self.outputB100Val != "":
+                self.outputB.clear_hint()
+                self.outputB.config(validate="none")
+                self.outputB.delete(0, "end")
+                self.outputB.insert(0, str(float(self.outputB100Val) * multiplier))
+                self.outputB.after_idle(self.ValidateSet, self.outputB)
+                self.outputB.resize("", "")
             if edit == "0":
                 self.outputB.icursor(index)
             elif edit == "1":
